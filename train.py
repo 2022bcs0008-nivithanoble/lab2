@@ -4,9 +4,10 @@ import joblib
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Ridge
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
+
 
 DATA_PATH = "data/winequality-red.csv"
 MODEL_PATH = "outputs/model/model.pkl"
@@ -17,23 +18,28 @@ os.makedirs("outputs/metrics", exist_ok=True)
 
 df = pd.read_csv(DATA_PATH)
 
-X = df.drop("quality", axis=1)
+corr = df.corr(numeric_only=True)['quality'].abs().sort_values(ascending=False)
+
+selected_features = corr[corr > 0.1].index.tolist()
+selected_features.remove('quality')
+
+X = df[selected_features]
 y = df["quality"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-pipeline = Pipeline([
-    ("scaler", StandardScaler()),
-    ("model", LinearRegression())
-])
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
-pipeline.fit(X_train, y_train)
+model = Ridge(alpha=1.0)
+model.fit(X_train_scaled, y_train)
 
-y_pred = pipeline.predict(X_test)
+y_pred = model.predict(X_test_scaled)
 mse = mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
 
-joblib.dump(pipeline, MODEL_PATH)
+joblib.dump(model, MODEL_PATH)
 
 metrics = {
     "MSE": mse,
