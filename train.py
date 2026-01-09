@@ -18,13 +18,18 @@ os.makedirs("outputs/metrics", exist_ok=True)
 
 df = pd.read_csv(DATA_PATH)
 
-X = df.drop('quality', axis=1)
+corr = df.corr(numeric_only=True)['quality'].abs().sort_values(ascending=False)
+
+selected_features = corr[corr > 0.1].index.tolist()
+selected_features.remove('quality')
+
+X = df[selected_features]
 y = df["quality"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 model = RandomForestRegressor(
-    n_estimators=50,
+    n_estimators=100,
     max_depth=10,
     random_state=42
 )
