@@ -91,7 +91,12 @@ jobs:
       - name: Build docker image
         if: env.DEPLOY == 'true'
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/wine-quality:latest .
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/wine-quality:v02 .
+
+      - name: Push docker image
+        if: env.DEPLOY == 'true'
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/wine-quality:v02
 
       - name: Update best metrics
         if: env.DEPLOY == 'true'
