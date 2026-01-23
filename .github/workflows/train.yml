@@ -75,26 +75,26 @@ jobs:
 
           if (($(echo "$NEW_R2 <= $BEST_R2" | bc -l))) || (($(echo "$NEW_MSE >= $BEST_MSE" | bc -l))); then
             echo "2022BCS0008 - Metric did not improve"
-            echo "DEPLOY = false" >> $GITHUB_ENV
+            echo "DEPLOY=false" >> $GITHUB_ENV
           else
             echo "2022BCS0008 - Metric improved"
-            echo "DEPLOY = true" >> $GITHUB_ENV
+            echo "DEPLOY=true" >> $GITHUB_ENV
             echo "New_R2=$NEW_R2" >> $GITHUB_ENV
             echo "New_MSE=$NEW_MSE" >> $GITHUB_ENV
           fi
 
       - name: Login to Docker
-        if: steps.compare.outputs.deploy == 'true'
+        if: env.DEPLOY == 'true'
         run: |
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       
       - name: Build docker image
-        if: steps.compare.outputs.deploy == 'true'
+        if: env.DEPLOY == 'true'
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/wine-quality:latest .
 
       - name: Update best metrics
-        if: steps.compare.outputs.deploy == 'true'
+        if: env.DEPLOY == 'true'
         env: 
           GH_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
         run: |
