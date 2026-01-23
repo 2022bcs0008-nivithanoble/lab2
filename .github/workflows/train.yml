@@ -61,8 +61,8 @@ jobs:
       - name: Read metric and compare
         id: compare
         run: |
-          NEW_R2=$(jq '.r2' outputs/metrics/results.json)
-          NEW_MSE=$(jq '.mse' outputs/metrics/results.json)
+          NEW_R2=$(jq '.R2' outputs/metrics/results.json)
+          NEW_MSE=$(jq '.MSE' outputs/metrics/results.json)
 
           BEST_R2=${{ vars.BEST_R2 }}
           BEST_MSE=${{ vars.BEST_MSE }}
