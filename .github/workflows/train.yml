@@ -73,13 +73,14 @@ jobs:
           echo "New_MSE: $NEW_MSE"
           echo "Best_MSE: $BEST_MSE"
 
-          if (($(echo "$NEW_R2 <= $BEST_R2" | bc -l))) || (($(echo "$NEW_MSE <= $BEST_MSE" | bc -l))); then
+          if (($(echo "$NEW_R2 <= $BEST_R2" | bc -l))) || (($(echo "$NEW_MSE >= $BEST_MSE" | bc -l))); then
             echo "2022BCS0008 - Metric did not improve"
             echo "DEPLOY = false" >> $GITHUB_ENV
           else
             echo "2022BCS0008 - Metric improved"
             echo "DEPLOY = true" >> $GITHUB_ENV
-            echo "New_R2=$CURRENT_R2" >> $GITHUB_ENV
+            echo "New_R2=$NEW_R2" >> $GITHUB_ENV
+            echo "New_MSE=$NEW_MSE" >> $GITHUB_ENV
           fi
 
       - name: Login to Docker
