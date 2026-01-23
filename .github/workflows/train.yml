@@ -98,8 +98,8 @@ jobs:
         env: 
           GH_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
         run: |
-          gh variable set BEST_R2 --body "${NEW_R2}"
-          gh variable set BEST_MSE --body "${NEW_MSE}"
+          gh variable set BEST_R2 --body "${New_R2}"
+          gh variable set BEST_MSE --body "${New_MSE}"
 
 
 
